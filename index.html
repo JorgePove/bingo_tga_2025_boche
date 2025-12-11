@@ -107,41 +107,23 @@
             background: rgba(30, 41, 59, 0.9);
             border: 2px solid rgba(0, 170, 255, 0.2);
             aspect-ratio: 1 / 1;
-            /* PROPIEDADES CLAVE PARA EL CENTRADO */
+            /* PROPIEDADES CLAVE PARA EL CENTRADO DE TEXTO */
             display: flex;
             align-items: center; 
             justify-content: center; 
             
-            padding: 5px; 
+            padding: 8px; /* Aumentamos el padding para el texto fijo */
             text-align: center;
             font-weight: bold;
+            font-size: 0.85rem; /* Tamaño para texto fijo */
             cursor: pointer;
             transition: all 0.3s ease;
             border-radius: 8px;
             user-select: none;
             color: #e2e8f0;
-            position: relative; /* Clave para superponer la X */
-            overflow: hidden; /* Asegura que la X no desborde */
-        }
-
-        /* Estilos del área de texto (para editar) */
-        .cell textarea {
-            /* TAMAÑO REDUCIDO PARA AUMENTAR EL ÁREA CLICABLE */
-            width: 80%; 
-            height: 80%;
-            
-            background: transparent;
-            border: none;
-            resize: none;
-            color: inherit;
-            font-size: 0.85rem;
-            font-family: inherit;
-            text-align: center;
-            font-weight: bold;
-            padding: 0;
-            box-sizing: border-box;
-            outline: none;
-            overflow: hidden; 
+            position: relative;
+            overflow: hidden;
+            line-height: 1.2; /* Mejoramos la legibilidad de múltiples líneas */
         }
         
         .cell.free-space {
@@ -163,11 +145,11 @@
         /* ------------------------------------------------ */
         .cell.selected {
             /* Sombreado y fondo rojo transparente */
-            background: rgba(255, 0, 0, 0.2); /* Rojo muy transparente */
-            border-color: #ff0000; /* Borde rojo intenso */
-            color: #ffc0c0; /* Texto ligeramente rojizo */
+            background: rgba(255, 0, 0, 0.2); 
+            border-color: #ff0000; 
+            color: #ffc0c0; 
             text-shadow: 0 0 5px #ff0000;
-            box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.4), 0 0 15px rgba(255, 0, 0, 0.8); /* Sombra exterior roja */
+            box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.4), 0 0 15px rgba(255, 0, 0, 0.8); 
         }
         
         /* Pseudoelemento para la primera barra de la X (/) */
@@ -176,9 +158,9 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 120%; /* Asegura que cubra toda la celda */
-            height: 15px; /* Grosor de la línea */
-            background: rgba(255, 0, 0, 0.4); /* Rojo con transparencia */
+            width: 120%; 
+            height: 15px; 
+            background: rgba(255, 0, 0, 0.4); 
             transform: translate(-50%, -50%) rotate(45deg);
             z-index: 10;
         }
@@ -191,13 +173,13 @@
             left: 50%;
             width: 120%; 
             height: 15px;
-            background: rgba(255, 0, 0, 0.4); /* Rojo con transparencia */
+            background: rgba(255, 0, 0, 0.4); 
             transform: translate(-50%, -50%) rotate(-45deg);
             z-index: 10;
         }
 
-        /* El área de texto y el texto de la casilla libre deben estar por encima de la X (mayor z-index) */
-        .cell.selected textarea,
+        /* El texto de la celda debe estar por encima de la X */
+        .cell.selected,
         .cell.free-space {
             z-index: 11;
         }
@@ -232,12 +214,10 @@
             .metallic-title { font-size: 1.5rem; }
             .neon-year { font-size: 2.5rem; }
             .bingo-grid { gap: 5px; }
-            .cell textarea { font-size: 0.65rem; }
+            .cell { font-size: 0.65rem; padding: 5px; }
             .cell.free-space { font-size: 0.75rem; }
-            
-            /* Ajuste de la X para móviles */
             .cell.selected::before, .cell.selected::after {
-                height: 10px; /* X más fina en móviles */
+                height: 10px; 
             }
         }
     </style>
@@ -271,31 +251,60 @@
     <script>
         const board = document.getElementById('bingoBoard');
 
+        // ==========================================================
+        // === ZONA DE PREDICCIONES: Modifica solo este array ===
+        // ==========================================================
+        const PREDICCIONES_BINGO = [
+            // Fila 1
+            "ALGÚN SHADOWDROP",
+            "THE WITCHER 3 3º DLC",
+            "TOMB RAIDER REMAKE",
+            "NUEVA IP",
+            "HALF-LIFE 3",
+            // Fila 2
+            "LO NUEVO DE HAZELIGHT STUDIO",
+            "DIVINITY ORIGINAL SIN 3",
+            "FORZA HORIZON 6",
+            "FABLE POR FIN ALGO DE GAMEPLAY",
+            "SILENT HILL TOWNFALL",
+            // Fila 3
+            "TOTAL WAR WARHAMMER 40K",
+            "KOJIMADA",
+            "✨ COMODÍN ✨", // Posición 12 (Contará como índice 12 si se usa el comodín)
+            "NUEVO JUEGO STAR WARS",
+            "FAMOSO SIN PUTA IDEA DE VIDEOJUEGOS",
+            // Fila 4
+            "RESIDENT EVIL 9",
+            "JUEGO CHINO CON GRAFICAZOS GENÉRICO",
+            "ALGO DE CRIMSON DESERT",
+            "JUDAS",
+            "EXPEDITION 33 GOTY",
+            // Fila 5
+            "GEARS OF WAR E-DAY",
+            "FINAL FANTASY 9 REMAKE",
+            "AC BLACK FLAG REMAKE",
+            "JUEGO MUERTO ANTES DE SALIR",
+            "MENCIÓN A LA IA"
+        ];
+        // ==========================================================
+        
         function createBoard() {
             for (let i = 0; i < 25; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 
+                // Asignar el texto de la lista al contenido de la celda
+                cell.textContent = PREDICCIONES_BINGO[i];
+
+                // Identificar y estilizar la casilla de comodín (índice 12)
                 if (i === 12) {
-                     // Casilla central: Texto fijo y clase especial
-                     cell.textContent = "✨ ESPACIO LIBRE ✨";
                      cell.classList.add('free-space');
-                } else {
-                    // Creación del área de texto para que el usuario escriba
-                    const textarea = document.createElement('textarea');
-                    textarea.value = `Escribe tu predicción #${i + 1}`;
-                    textarea.rows = 3; 
-                    cell.appendChild(textarea);
-                    
-                    // Bloqueamos la propagación del clic al editar el texto.
-                    textarea.addEventListener('click', (e) => {
-                        e.stopPropagation(); 
-                    });
-                }
+                } 
 
                 // Evento para marcar/desmarcar la celda (funcionalidad de bingo). 
                 cell.addEventListener('click', () => {
-                    if (!cell.classList.contains('free-space')) {
+                    // La casilla "Comodín" funciona como la casilla "Espacio Libre" anterior: es marcada por defecto.
+                    if (i !== 12) {
                         cell.classList.toggle('selected');
                     }
                 });
