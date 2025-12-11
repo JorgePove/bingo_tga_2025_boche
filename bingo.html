@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Game Awards 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Estilos Generales y Fondo --- */
+        body {
+            /* RUTA LOCAL: tga_background.jpg */
+            background-image: url('tga_background.jpg'); 
+            background-size: cover; 
+            background-attachment: fixed; 
+            background-position: center center;
+            
+            background-color: #0f172a; 
+            background-blend-mode: soft-light;
+            
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: none;
+        }
+
+        /* --- Encabezado y Títulos --- */
+        header {
+            text-align: center;
+            padding: 50px 20px 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            max-width: 240px; 
+            height: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 5px rgba(255, 255, 255, 0.6);
+            border-radius: 5px; 
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5)); 
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .metallic-title {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to bottom, #e0e7ff, #94a3b8, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .neon-year {
+            font-size: 3.5rem;
+            display: block;
+            margin-top: 10px;
+            color: #fff;
+            text-shadow: 
+                0 0 4px rgba(255, 255, 255, 0.7),
+                0 0 8px rgba(255, 255, 255, 0.7),
+                0 0 15px rgba(0, 170, 255, 0.8),
+                0 0 30px rgba(0, 170, 255, 0.7),
+                0 0 60px rgba(0, 170, 255, 0.6);
+        }
+
+        /* --- Matriz de Bingo --- */
+        .bingo-container {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 800px;
+            width: 90%;
+            margin-bottom: 50px;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .cell {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(0, 170, 255, 0.2);
+            aspect-ratio: 1 / 1;
+            /* PROPIEDADES CLAVE PARA EL CENTRADO */
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            
+            padding: 5px; 
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            user-select: none;
+            color: #e2e8f0;
+            position: relative;
+        }
+
+        /* Estilos del área de texto (para editar) */
+        .cell textarea {
+            /* TAMAÑO REDUCIDO PARA AUMENTAR EL ÁREA CLICABLE */
+            width: 80%; 
+            height: 80%;
+            
+            background: transparent;
+            border: none;
+            resize: none;
+            color: inherit;
+            font-size: 0.85rem;
+            font-family: inherit;
+            text-align: center;
+            font-weight: bold;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            overflow: hidden; 
+            /* Flexbox se encarga del centrado */
+        }
+        
+        .cell.free-space {
+            font-size: 1rem;
+            background: rgba(0, 170, 255, 0.1);
+            border-color: #00aaff;
+            color: #fff;
+            text-shadow: 0 0 5px #00aaff;
+            cursor: default;
+        }
+        
+        .cell:hover {
+            border-color: #00aaff;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
+        }
+
+        /* Estado seleccionado: Azul neón */
+        .cell.selected {
+            background: rgba(0, 170, 255, 0.2);
+            border-color: #00aaff;
+            color: #fff;
+            text-shadow: 0 0 5px #00aaff;
+            box-shadow: inset 0 0 20px rgba(0, 170, 255, 0.4), 0 0 15px rgba(0, 170, 255, 0.6);
+        }
+
+        /* --- Pie de Página --- */
+        footer {
+            margin-top: auto;
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 2;
+        }
+
+        .social-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #00aaff;
+            text-shadow: 0 0 8px rgba(0, 170, 255, 0.8);
+        }
+
+        /* Responsivo */
+        @media (max-width: 600px) {
+            .logo { max-width: 150px; }
+            .metallic-title { font-size: 1.5rem; }
+            .neon-year { font-size: 2.5rem; }
+            .bingo-grid { gap: 5px; }
+            .cell textarea { font-size: 0.65rem; }
+            .cell.free-space { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="tga_logo.png" 
+             alt="Logo TGA" 
+             class="logo">
+             
+        <h1>
+            <span class="metallic-title">BINGO GAME AWARDS</span>
+            <span class="neon-year">2025</span>
+        </h1>
+    </header>
+
+    <div class="bingo-container">
+        <main class="bingo-grid" id="bingoBoard">
+            </main>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://x.com/jorgegopo" target="_blank">Twitter (@jorgegopo)</a>
+            <a href="https://www.instagram.com/bocheto77/" target="_blank">Instagram (@bocheto77)</a>
+        </div>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: 15px;">&copy; 2025 - Creado para fans de TGA</p>
+    </footer>
+
+    <script>
+        const board = document.getElementById('bingoBoard');
+
+        function createBoard() {
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                
+                if (i === 12) {
+                     // Casilla central: Texto fijo y clase especial
+                     cell.textContent = "✨ ESPACIO LIBRE ✨";
+                     cell.classList.add('free-space');
+                } else {
+                    // Creación del área de texto para que el usuario escriba
+                    const textarea = document.createElement('textarea');
+                    textarea.value = `Escribe tu predicción #${i + 1}`;
+                    textarea.rows = 3; 
+                    cell.appendChild(textarea);
+                    
+                    // IMPORTANTE: Bloqueamos la propagación del clic al editar el texto.
+                    textarea.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                    });
+                }
+
+                // Evento para marcar/desmarcar la celda (funcionalidad de bingo). 
+                // Se activa al clicar en la celda 'cell', es decir, en el margen alrededor del textarea.
+                cell.addEventListener('click', () => {
+                    if (!cell.classList.contains('free-space')) {
+                        cell.classList.toggle('selected');
+                    }
+                });
+
+                board.appendChild(cell);
+            }
+        }
+
+        // Inicializar el tablero
+        createBoard();
+    </script>
+
+</body>
+</html>
