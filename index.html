@@ -120,7 +120,8 @@
             border-radius: 8px;
             user-select: none;
             color: #e2e8f0;
-            position: relative;
+            position: relative; /* Clave para superponer la X */
+            overflow: hidden; /* Asegura que la X no desborde */
         }
 
         /* Estilos del área de texto (para editar) */
@@ -141,7 +142,6 @@
             box-sizing: border-box;
             outline: none;
             overflow: hidden; 
-            /* Flexbox se encarga del centrado */
         }
         
         .cell.free-space {
@@ -158,13 +158,48 @@
             box-shadow: 0 0 15px rgba(0, 170, 255, 0.3);
         }
 
-        /* Estado seleccionado: Azul neón */
+        /* ------------------------------------------------ */
+        /* --- ESTILOS DE CASILLA MARCADA (ROJO INTENSO) --- */
+        /* ------------------------------------------------ */
         .cell.selected {
-            background: rgba(0, 170, 255, 0.2);
-            border-color: #00aaff;
-            color: #fff;
-            text-shadow: 0 0 5px #00aaff;
-            box-shadow: inset 0 0 20px rgba(0, 170, 255, 0.4), 0 0 15px rgba(0, 170, 255, 0.6);
+            /* Sombreado y fondo rojo transparente */
+            background: rgba(255, 0, 0, 0.2); /* Rojo muy transparente */
+            border-color: #ff0000; /* Borde rojo intenso */
+            color: #ffc0c0; /* Texto ligeramente rojizo */
+            text-shadow: 0 0 5px #ff0000;
+            box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.4), 0 0 15px rgba(255, 0, 0, 0.8); /* Sombra exterior roja */
+        }
+        
+        /* Pseudoelemento para la primera barra de la X (/) */
+        .cell.selected::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%; /* Asegura que cubra toda la celda */
+            height: 15px; /* Grosor de la línea */
+            background: rgba(255, 0, 0, 0.4); /* Rojo con transparencia */
+            transform: translate(-50%, -50%) rotate(45deg);
+            z-index: 10;
+        }
+
+        /* Pseudoelemento para la segunda barra de la X (\) */
+        .cell.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%; 
+            height: 15px;
+            background: rgba(255, 0, 0, 0.4); /* Rojo con transparencia */
+            transform: translate(-50%, -50%) rotate(-45deg);
+            z-index: 10;
+        }
+
+        /* El área de texto y el texto de la casilla libre deben estar por encima de la X (mayor z-index) */
+        .cell.selected textarea,
+        .cell.free-space {
+            z-index: 11;
         }
 
         /* --- Pie de Página --- */
@@ -199,6 +234,11 @@
             .bingo-grid { gap: 5px; }
             .cell textarea { font-size: 0.65rem; }
             .cell.free-space { font-size: 0.75rem; }
+            
+            /* Ajuste de la X para móviles */
+            .cell.selected::before, .cell.selected::after {
+                height: 10px; /* X más fina en móviles */
+            }
         }
     </style>
 </head>
@@ -247,14 +287,13 @@
                     textarea.rows = 3; 
                     cell.appendChild(textarea);
                     
-                    // IMPORTANTE: Bloqueamos la propagación del clic al editar el texto.
+                    // Bloqueamos la propagación del clic al editar el texto.
                     textarea.addEventListener('click', (e) => {
                         e.stopPropagation(); 
                     });
                 }
 
                 // Evento para marcar/desmarcar la celda (funcionalidad de bingo). 
-                // Se activa al clicar en la celda 'cell', es decir, en el margen alrededor del textarea.
                 cell.addEventListener('click', () => {
                     if (!cell.classList.contains('free-space')) {
                         cell.classList.toggle('selected');
